@@ -27,8 +27,28 @@ public class Joueur
             Console.Write($"Entrez les coordonnées du navire {i} : ");
             string nombre = Console.ReadLine();
             string[] nb = nombre.Split(' ');
+            bool verifCoo = verifCoordonneesMap(map, int.Parse(nb[0]), int.Parse(nb[1]));
+            while (verifCoo == false)
+            {
+                Console.WriteLine("Coordonnées invalides. Veuillez réessayer.");
+                Console.Write($"Entrez les coordonnées du navire {i} : ");
+                nombre = Console.ReadLine();
+                nb = nombre.Split(' ');
+                verifCoo = verifCoordonneesMap(map, int.Parse(nb[0]), int.Parse(nb[1]));
+            }
+
+            bool verifNav = verifNavireACetEndroit(map, int.Parse(nb[0]), int.Parse(nb[1]));
+            while (verifNav == false)
+            {
+                Console.WriteLine("Vous avez déja un navire a cet endroit ! ");
+                Console.Write($"Entrez les coordonnées du navire {i} : ");
+                nombre = Console.ReadLine();
+                nb = nombre.Split(' ');
+                verifNav = verifNavireACetEndroit(map, int.Parse(nb[0]), int.Parse(nb[1]));
+            }
 
             map[int.Parse(nb[0]), int.Parse(nb[1])] = "@";
+            afficherMapJoueur(mapNaviresJoueur);
         }
     }
         
@@ -46,15 +66,41 @@ public class Joueur
             }
             Console.WriteLine();
         }
-        for (int i = 0; i < 100; i++)
+    }
+
+    private static bool verifCoordonneesMap(string[,] mapNaviresJoueur, int un, int deux) { 
+        if ( un > mapNaviresJoueur.GetLength(1) || un < 0)
         {
-            Console.WriteLine();
+            return false;
+        }
+        else if (deux > mapNaviresJoueur.GetLength(1) || deux < 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private static bool verifNavireACetEndroit(string[,] map, int un, int deux)
+    {
+        if (map[un, deux] == ("@"))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 
     public void main()
     {
         remplirMapJoueur(mapNaviresJoueur);
-        afficherMapJoueur(mapNaviresJoueur);
+        for (int i = 0; i < 100; i++)
+        {
+            Console.WriteLine();
+        }
     }
 }
