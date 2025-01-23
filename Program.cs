@@ -3,11 +3,8 @@ public class App
 {
 
     static void Main(string[] args) {
-        Joueur jUn = new Joueur(1);
-        jUn.main();
-        Joueur jDeux = new Joueur(2);
-        jDeux.main();
-
+        List<Joueur> joueurs = new List<Joueur> {new Joueur(1), new Joueur(2)};
+        Game game = new Game(joueurs);
     }
 
 }

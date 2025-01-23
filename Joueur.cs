@@ -1,79 +1,86 @@
+interface IJoueur
+{
+    void AfficherMapJoueur();
+
+    Coordonates RequestAttack();
+
+    bool VerifNavireACetEndroit(int un, int deux);
+}
+
 public class Joueur
 {
     // Declare a two dimensional array.
-    private static string[,] mapNaviresJoueur = new string[5, 5];
+    private string[,] mapNaviresJoueur = new string[5, 5];
 
-    private static int numeroJoueur;
+    private int numeroJoueur;
+
+    private List<string> ListAttacks = new List<string>();
 
     public Joueur(int numJoueur)
     {
         numeroJoueur = numJoueur;
     }
 
-    private static void remplirMapJoueur(string[,] map)
+    private void RemplirMapJoueur()
     {
-        for (int i = 0; i < map.GetLength(0); i++)
+        for (int i = 0; i < mapNaviresJoueur.GetLength(0); i++)
         {
-            for (int j = 0; j < map.GetLength(0); j++)
+            for (int j = 0; j < mapNaviresJoueur.GetLength(0); j++)
             {
-                map[i, j] = "-";
+                mapNaviresJoueur[i, j] = "-";
             }
         }
-        Console.WriteLine($"JOUEUR {numeroJoueur}, entrez les coordonnées de vos navires, sous la forme \"L C\" \n" +
-            $"(L représente la ligne entre 0 et 4 et C la colonne entre 0 et 4).");
+        Console.WriteLine($"JOUEUR {numeroJoueur}, entrez les coordonnï¿½es de vos navires, sous la forme \"L C\" \n" +
+            $"(L reprï¿½sente la ligne entre 0 et 4 et C la colonne entre 0 et 4).");
 
         for (int i = 1; i <= 5; i++)
         {
-            Console.Write($"Entrez les coordonnées du navire {i} : ");
+            Console.Write($"Entrez les coordonnï¿½es du navire {i} : ");
             string nombre = Console.ReadLine();
             string[] nb = nombre.Split(' ');
-            bool verifCoo = verifCoordonneesMap(map, int.Parse(nb[0]), int.Parse(nb[1]));
+            bool verifCoo = VerifCoordonneesMap(int.Parse(nb[0]), int.Parse(nb[1]));
             while (verifCoo == false)
             {
-                Console.WriteLine("Coordonnées invalides. Veuillez réessayer.");
-                Console.Write($"Entrez les coordonnées du navire {i} : ");
+                Console.WriteLine("Coordonnï¿½es invalides. Veuillez rï¿½essayer.");
+                Console.Write($"Entrez les coordonnï¿½es du navire {i} : ");
                 nombre = Console.ReadLine();
                 nb = nombre.Split(' ');
-                verifCoo = verifCoordonneesMap(map, int.Parse(nb[0]), int.Parse(nb[1]));
+                verifCoo = VerifCoordonneesMap(int.Parse(nb[0]), int.Parse(nb[1]));
             }
-
-            bool verifNav = verifNavireACetEndroit(map, int.Parse(nb[0]), int.Parse(nb[1]));
-            while (verifNav == false)
+            bool verifNav = VerifNavireACetEndroit(int.Parse(nb[0]), int.Parse(nb[1]));
+            while (verifNav == true)
             {
-                Console.WriteLine("Vous avez déja un navire a cet endroit ! ");
-                Console.Write($"Entrez les coordonnées du navire {i} : ");
+                Console.WriteLine("Vous avez dï¿½ja un navire a cet endroit ! ");
+                Console.Write($"Entrez les coordonnï¿½es du navire {i} : ");
                 nombre = Console.ReadLine();
                 nb = nombre.Split(' ');
-                verifNav = verifNavireACetEndroit(map, int.Parse(nb[0]), int.Parse(nb[1]));
+                verifNav = VerifNavireACetEndroit(int.Parse(nb[0]), int.Parse(nb[1]));
             }
 
-            map[int.Parse(nb[0]), int.Parse(nb[1])] = "@";
-            afficherMapJoueur(mapNaviresJoueur);
+            mapNaviresJoueur[int.Parse(nb[0]), int.Parse(nb[1])] = "@";
+            AfficherMapJoueur();
         }
     }
-        
-    
 
-    private static void afficherMapJoueur(string[,] map)
+
+
+    public void AfficherMapJoueur()
     {
         Console.WriteLine("  0 1 2 3 4");
-        for (int i = 0; i < map.GetLength(0); i++)
+        for (int i = 0; i < mapNaviresJoueur.GetLength(0); i++)
         {
-            Console.Write(i+" ");
-            for (int j = 0; j < map.GetLength(0); j++)
+            Console.Write(i + " ");
+            for (int j = 0; j < mapNaviresJoueur.GetLength(0); j++)
             {
-                Console.Write(map[i, j]+ " ");
+                Console.Write(mapNaviresJoueur[i, j] + " ");
             }
             Console.WriteLine();
         }
     }
 
-    private static bool verifCoordonneesMap(string[,] mapNaviresJoueur, int un, int deux) { 
-        if ( un > mapNaviresJoueur.GetLength(1) || un < 0)
-        {
-            return false;
-        }
-        else if (deux > mapNaviresJoueur.GetLength(1) || deux < 0)
+    private bool VerifCoordonneesMap(int un, int deux)
+    {
+        if (un >= mapNaviresJoueur.GetLength(0) || un < 0 || deux >= mapNaviresJoueur.GetLength(1) || deux < 0)
         {
             return false;
         }
@@ -83,24 +90,65 @@ public class Joueur
         }
     }
 
-    private static bool verifNavireACetEndroit(string[,] map, int un, int deux)
+
+    public bool VerifNavireACetEndroit(int un, int deux)
     {
-        if (map[un, deux] == ("@"))
-        {
-            return false;
-        }
-        else
+        if (mapNaviresJoueur[un, deux] == ("@"))
         {
             return true;
         }
+        else
+        {
+            return false;
+        }
     }
 
-    public void main()
+    public void couler(Coordonates coord){
+        mapNaviresJoueur[coord.getLigne(), coord.getCol()] = "X";
+    }
+
+    public Coordonates RequestAttack()
     {
-        remplirMapJoueur(mapNaviresJoueur);
+        Console.Write($"JOUEUR {numeroJoueur}, vous devez essayer de couler un bateau de votre adversaire ! \n Entrez des coordonnÃ©es :");
+        String[] nombres = Console.ReadLine().Split(' ');
+        Coordonates coord = new Coordonates(int.Parse(nombres[0]), int.Parse(nombres[1]), $"{int.Parse(nombres[0])}{int.Parse(nombres[1])}");
+        if (coord.getLigne() <= 4 && coord.getCol() <= 4)
+        {
+            if (!ListAttacks.Contains(coord.GetId()))
+            {
+                ListAttacks.Add(coord.GetId());
+                return coord;
+            }
+            Console.Write("\nVous avez dÃ©ja attaquÃ© cette case. Veuillez rÃ©essayer !");
+        }
+        else
+        {
+            Console.WriteLine("\nCoordonnÃ©es invalides. Veuillez rÃ©essayer. Les coordonÃ©es doivent Ãªtre de la forme \"L C\" \n" +
+            $"(L reprï¿½sente la ligne entre 0 et 4 et C la colonne entre 0 et 4).");
+            return RequestAttack();
+        }
+        return RequestAttack();
+    }
+
+    public void Main()
+    {
+        RemplirMapJoueur();
         for (int i = 0; i < 100; i++)
         {
             Console.WriteLine();
         }
+    }
+
+    public bool isThereStillBoats(){
+        for (int i = 0; i < mapNaviresJoueur.GetLength(0); i++)
+        {
+            for (int j = 0; j < mapNaviresJoueur.GetLength(0); j++)
+            {
+                if(mapNaviresJoueur[i, j] == "@"){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
