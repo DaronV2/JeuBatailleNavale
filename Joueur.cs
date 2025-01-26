@@ -12,6 +12,8 @@ public class Joueur
     // Declare a two dimensional array.
     private string[,] mapNaviresJoueur = new string[5, 5];
 
+    private string[,] mapAttaquesJoueur = new string[5, 5];
+
     private int numeroJoueur;
 
     private List<string> ListAttacks = new List<string>();
@@ -19,6 +21,26 @@ public class Joueur
     public Joueur(int numJoueur)
     {
         numeroJoueur = numJoueur;
+    }
+
+    public string[,] getMapNaviresJoueur()
+    {
+        return mapNaviresJoueur;
+    }
+
+    public string[,] getMapAttaquesJoueur()
+    {
+        return mapAttaquesJoueur;
+    }
+
+    private void remplirMapAttaquesJoueur(){
+        for (int i = 0; i < mapAttaquesJoueur.GetLength(0); i++)
+        {
+            for (int j = 0; j < mapAttaquesJoueur.GetLength(0); j++)
+            {
+                mapAttaquesJoueur[i, j] = "-";
+            }
+        }
     }
 
     private void RemplirMapJoueur()
@@ -58,21 +80,21 @@ public class Joueur
             }
 
             mapNaviresJoueur[int.Parse(nb[0]), int.Parse(nb[1])] = "@";
-            AfficherMapJoueur();
+            AfficherMap(mapNaviresJoueur);
         }
     }
 
 
 
-    public void AfficherMapJoueur()
+    public void AfficherMap(string[,] map)
     {
         Console.WriteLine("  0 1 2 3 4");
-        for (int i = 0; i < mapNaviresJoueur.GetLength(0); i++)
+        for (int i = 0; i < map.GetLength(0); i++)
         {
             Console.Write(i + " ");
-            for (int j = 0; j < mapNaviresJoueur.GetLength(0); j++)
+            for (int j = 0; j < map.GetLength(0); j++)
             {
-                Console.Write(mapNaviresJoueur[i, j] + " ");
+                Console.Write(map[i, j] + " ");
             }
             Console.WriteLine();
         }
@@ -107,8 +129,17 @@ public class Joueur
         mapNaviresJoueur[coord.getLigne(), coord.getCol()] = "X";
     }
 
+    public void coulerShipEnnemi(Coordonates coord){
+        mapAttaquesJoueur[coord.getLigne(), coord.getCol()] = "X";
+    }
+
+    public void rien(Coordonates coord){
+        mapAttaquesJoueur[coord.getLigne(), coord.getCol()] = "O";
+    }
+
     public Coordonates RequestAttack()
     {
+        AfficherMap(mapAttaquesJoueur);
         Console.Write($"JOUEUR {numeroJoueur}, vous devez essayer de couler un bateau de votre adversaire ! \n Entrez des coordonnées :");
         String[] nombres = Console.ReadLine().Split(' ');
         Coordonates coord = new Coordonates(int.Parse(nombres[0]), int.Parse(nombres[1]), $"{int.Parse(nombres[0])}{int.Parse(nombres[1])}");
@@ -133,6 +164,8 @@ public class Joueur
     public void Main()
     {
         RemplirMapJoueur();
+        remplirMapAttaquesJoueur();
+        AfficherMap(mapAttaquesJoueur);
         for (int i = 0; i < 100; i++)
         {
             Console.WriteLine();
